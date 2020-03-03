@@ -10,7 +10,7 @@ export class App {
   private state = DfaState.Initial;
 
   constructor() {
-    const testExpression = "2 + 2 * 5 + 10 * 2 * 1";
+    const testExpression = "2+3+4+5";
     const dictionary = this.getToken(testExpression + " ");
     const htmlArr = dictionary.map(atom => {
       return `<div class="item">
@@ -21,8 +21,8 @@ export class App {
     document.body.innerHTML = htmlArr.join("");
     const reader = new TokenReader(dictionary);
     const AST = this.additive(reader);
-    console.log(this.calcAST(AST as ASTNode));
-    // console.log(dictionary);
+    console.log("AST", AST);
+    console.log("result", this.calcAST(AST as ASTNode));
   }
 
   getDfaStateByOperator(operator: string) {
@@ -182,30 +182,28 @@ export class App {
   }
 
   additive(tokenReader: TokenReader) {
-    const child1 = this.multiplicative(tokenReader);
+    let child1 = this.multiplicative(tokenReader);
     if (child1 !== null) {
-      const nextToken = tokenReader.peek();
-      if (nextToken) {
-        if (nextToken.type === DfaState.Plus) {
-          // 消耗掉*
+      while (true) {
+        const nextToken = tokenReader.peek();
+        if (nextToken && nextToken.type === DfaState.Plus) {
+          // 消耗掉加号
           tokenReader.read();
           // 产生节点
           const node = new ASTNode(ASTNodeType.AdditiveExpression, "+");
-          // 读取右侧表达式
-          const child2 = this.additive(tokenReader);
-          if (child2 !== null) {
+          const child2 = this.multiplicative(tokenReader);
+          if (child2) {
             node.addChild(child1);
             node.addChild(child2);
-            return node;
+            child1 = node;
           } else {
-            throw new Error("无法解析的加法表达式");
+            throw Error("无法解析加法表达式");
           }
         } else {
-          return child1;
+          break;
         }
-      } else {
-        return child1;
       }
+      return child1;
     } else {
       return null;
     }
@@ -215,29 +213,29 @@ export class App {
     const token = tokenReader.peek();
     if (token && token.type === DfaState.IntLiteral) {
       const token = tokenReader.read();
-      const child1 = new ASTNode(ASTNodeType.IntLiteral, token.value);
-      const nextToken = tokenReader.peek();
-      if (nextToken) {
-        if (nextToken.type === DfaState.Star) {
+      let child1 = new ASTNode(ASTNodeType.IntLiteral, token.value);
+      while (true) {
+        const nextToken = tokenReader.peek();
+        if (nextToken && nextToken.type === DfaState.Star) {
           // 消耗掉*
           tokenReader.read();
           // 产生节点
           const node = new ASTNode(ASTNodeType.MultiplicativeExpression, "*");
-          // 读取右侧表达式
-          const child2 = this.multiplicative(tokenReader);
-          if (child2 != null) {
+          const token = tokenReader.peek();
+          if (token && token.type === DfaState.IntLiteral) {
+            const token = tokenReader.read();
+            const child2 = new ASTNode(ASTNodeType.IntLiteral, token.value);
             node.addChild(child1);
             node.addChild(child2);
-            return node;
+            child1 = node;
           } else {
-            throw new Error("无法解析的乘法表达式");
+            throw Error("无法解析乘法表达式");
           }
         } else {
-          return child1;
+          break;
         }
-      } else {
-        return child1;
       }
+      return child1;
     } else {
       return null;
     }
