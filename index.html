@@ -1,15 +1,26 @@
 <html>
+  <head>
+    <title>Parcel Sandbox</title>
+    <meta charset="UTF-8" />
+  </head>
 
-<head>
-	<title>Parcel Sandbox</title>
-	<meta charset="UTF-8" />
-</head>
-
-<body>
-	<div id="app"></div>
-
-	<script src="src/index.ts">
-	</script>
-</body>
-
+  <body>
+    <div id="app"></div>
+    <textarea
+      style="min-width:200px;min-height: 200px"
+      id="script"
+      placeholder="在此输入脚本"
+    >
+    </textarea>
+    <div style="margin-top:20px">
+      <button id="parseScript">
+        执行脚本
+      </button>
+    </div>
+    <div
+      id="info"
+      style="margin-top:20px;border:1px solid #ccc;width:200px;height:100px;overflow:scroll"
+    ></div>
+    <script src="src/index.ts"></script>
+  </body>
 </html>

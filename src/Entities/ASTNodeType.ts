@@ -4,5 +4,11 @@ export enum ASTNodeType {
   /** 加法表达式 */
   AdditiveExpression,
   /** 乘法表达式 */
-  MultiplicativeExpression
+  MultiplicativeExpression,
+  /** 变量 */
+  Variable,
+  /** 赋值 */
+  Assignment,
+  /** 根节点 */
+  Root
 }

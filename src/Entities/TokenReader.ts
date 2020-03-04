@@ -17,4 +17,12 @@ export class TokenReader {
     this.idx = this.idx + 1;
     return token;
   }
+
+  getIdx() {
+    return this.idx;
+  }
+
+  setIdx(idx: number) {
+    this.idx = idx;
+  }
 }

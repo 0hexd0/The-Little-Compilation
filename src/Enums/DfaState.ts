@@ -24,5 +24,7 @@ export enum DfaState {
   /** 乘 */
   Star,
   /**除 */
-  Slash
+  Slash,
+  /** 分号 */
+  SemiColon
 }
